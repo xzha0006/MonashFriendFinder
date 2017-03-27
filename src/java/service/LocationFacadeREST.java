@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -105,6 +106,17 @@ public class LocationFacadeREST extends AbstractFacade<Location> {
     public List<Location> findByDateTime(@PathParam("dateTime") String dateTime) {
         Query query = em.createNamedQuery("Location.findByDateTime");
         query.setParameter("dateTime", dateTime);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByLocationNameAndStudentFullName/{locationName}/{firstName}/{lastName}")
+    @Produces({"application/json"})
+    public List<Location> findByLocationNameAndStudentFullName(@PathParam("locationName") String locationName, @PathParam("firstName") String firstName, @PathParam("lastName") String lastName) {
+        TypedQuery<Location> query = em.createQuery("SELECT l FROM Location l WHERE l.studentId.firstName = :firstName AND l.studentId.lastName = :lastName AND l.locationName = :locationName", Location.class);
+        query.setParameter("firstName", firstName);
+        query.setParameter("lastName", lastName);
+        query.setParameter("locationName", locationName);
         return query.getResultList();
     }
 

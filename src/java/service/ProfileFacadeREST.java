@@ -216,7 +216,6 @@ public class ProfileFacadeREST extends AbstractFacade<Profile> {
         query.setParameter("lastName", lastName);
         return query.getResultList();
     }
-
     
     @GET
     @Override
