@@ -67,7 +67,7 @@ public class FriendshipFacadeREST extends AbstractFacade<Friendship> {
     @Path("findByStudOneID/{studentOneId}")
     @Produces({"application/json"})
     public List<Friendship> findByStudOneID(@PathParam("studentOneId") Integer studentOneId) {
-        Query query = em.createNamedQuery("Friendship.findByStudentOneId");
+        Query query = em.createNamedQuery("Friendship.findByStudOneId");
         query.setParameter("studentOneId", studentOneId);
         return query.getResultList();
     }

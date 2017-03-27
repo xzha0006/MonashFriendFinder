@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Friendship.findAll", query = "SELECT f FROM Friendship f")
     , @NamedQuery(name = "Friendship.findByFriendshipId", query = "SELECT f FROM Friendship f WHERE f.friendshipId = :friendshipId")
+    , @NamedQuery(name = "Friendship.findByStudOneId", query = "SELECT f FROM Friendship f WHERE f.studentOneId.studentId = :studentOneId")
+    , @NamedQuery(name = "Friendship.findByStudTwoId", query = "SELECT f FROM Friendship f WHERE f.studentTwoId.studentId = :studentTwoId")
     , @NamedQuery(name = "Friendship.findByStartingDate", query = "SELECT f FROM Friendship f WHERE f.startingDate = :startingDate")
     , @NamedQuery(name = "Friendship.findByEndingDate", query = "SELECT f FROM Friendship f WHERE f.endingDate = :endingDate")})
 public class Friendship implements Serializable {

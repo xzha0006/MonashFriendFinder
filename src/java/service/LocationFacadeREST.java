@@ -64,6 +64,15 @@ public class LocationFacadeREST extends AbstractFacade<Location> {
     }
     
     @GET
+    @Path("findByStudentId/{studentId}")
+    @Produces({"application/json"})
+    public List<Location> findByStudentId(@PathParam("studentId") Integer studentId) {
+        Query query = em.createNamedQuery("Location.findByStudentId");
+        query.setParameter("studentId", studentId);
+        return query.getResultList();
+    }
+    
+    @GET
     @Path("findByLocationName/{locationName}")
     @Produces({"application/json"})
     public List<Location> findByLocationName(@PathParam("locationName") String locationName) {

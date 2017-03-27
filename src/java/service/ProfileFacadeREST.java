@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -203,6 +204,16 @@ public class ProfileFacadeREST extends AbstractFacade<Profile> {
     public List<Profile> findBySubscriptionDatetime(@PathParam("subscriptionDatetime") String subscriptionDatetime) {
         Query query = em.createNamedQuery("Profile.findBySubscriptionDatetime");
         query.setParameter("subscriptionDatetime", subscriptionDatetime);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByFirstNameAndLastName/{firstName}/{lastName}")
+    @Produces({"application/json"})
+    public List<Profile> findByFirstNameAndLastName(@PathParam("firstName") String firstName, @PathParam("lastName") String lastName){
+        TypedQuery<Profile> query =  em.createQuery("SELECT p FROM Profile p WHERE p.firstName = :firstName AND p.lastName = :lastName", Profile.class);
+        query.setParameter("firstName", firstName);
+        query.setParameter("lastName", lastName);
         return query.getResultList();
     }
 
