@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -62,6 +63,150 @@ public class ProfileFacadeREST extends AbstractFacade<Profile> {
         return super.find(id);
     }
 
+    @Path("findByFirstName/{firstName}")
+    @Produces({"application/json"})
+    public List<Profile> findByFirstName(@PathParam("firstName") String firstName) {
+        Query query = em.createNamedQuery("Profile.findByFirstName");
+        query.setParameter("firstName", firstName);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByLastName/{lastName}")
+    @Produces({"application/json"})
+    public List<Profile> findByLastName(@PathParam("lastName") String lastName) {
+        Query query = em.createNamedQuery("Profile.findByLastName");
+        query.setParameter("lastName", lastName);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByDateOfBirth/{dateOfBirth}")
+    @Produces({"application/json"})
+    public List<Profile> findByDateOfBirth(@PathParam("dateOfBirth") String dateOfBirth) {
+        Query query = em.createNamedQuery("Profile.findByDateOfBirth");
+        query.setParameter("dateOfBirth", dateOfBirth);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByGender/{gender}")
+    @Produces({"application/json"})
+    public List<Profile> findByGender(@PathParam("gender") String gender) {
+        Query query = em.createNamedQuery("Profile.findByGender");
+        query.setParameter("gender", gender);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByCourse/{course}")
+    @Produces({"application/json"})
+    public List<Profile> findByCourse(@PathParam("course") String course) {
+        Query query = em.createNamedQuery("Profile.findByCourse");
+        query.setParameter("course", course);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByStudyMode/{studyMode}")
+    @Produces({"application/json"})
+    public List<Profile> findByStudyMode(@PathParam("studyMode") String studyMode) {
+        Query query = em.createNamedQuery("Profile.findByStudyMode");
+        query.setParameter("studyMode", studyMode);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByAddress/{address}")
+    @Produces({"application/json"})
+    public List<Profile> findByAddress(@PathParam("address") String address) {
+        Query query = em.createNamedQuery("Profile.findByAddress");
+        query.setParameter("address", address);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findBySuburb/{suburb}")
+    @Produces({"application/json"})
+    public List<Profile> findBySuburb(@PathParam("suburb") String suburb) {
+        Query query = em.createNamedQuery("Profile.findBySuburb");
+        query.setParameter("suburb", suburb);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByNationality/{nationality}")
+    @Produces({"application/json"})
+    public List<Profile> findByNationality(@PathParam("nationality") String nationality) {
+        Query query = em.createNamedQuery("Profile.findByNationality");
+        query.setParameter("nationality", nationality);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByNativeLanguage/{nativeLanguage}")
+    @Produces({"application/json"})
+    public List<Profile> findByNativeLanguage(@PathParam("nativeLanguage") String nativeLanguage) {
+        Query query = em.createNamedQuery("Profile.findByNativeLanguage");
+        query.setParameter("nativeLanguage", nativeLanguage);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByFavouriteSport/{favouriteSport}")
+    @Produces({"application/json"})
+    public List<Profile> findByFavouriteSport(@PathParam("favouriteSport") String favouriteSport) {
+        Query query = em.createNamedQuery("Profile.findByFavouriteSport");
+        query.setParameter("favouriteSport", favouriteSport);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByFavouriteMovie/{favouriteMovie}")
+    @Produces({"application/json"})
+    public List<Profile> findByFavouriteMovie(@PathParam("favouriteMovie") String favouriteMovie) {
+        Query query = em.createNamedQuery("Profile.findByFavouriteMovie");
+        query.setParameter("favouriteMovie", favouriteMovie);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByFavouriteUnit/{favouriteUnit}")
+    @Produces({"application/json"})
+    public List<Profile> findByFavouriteUnit(@PathParam("favouriteUnit") String favouriteUnit) {
+        Query query = em.createNamedQuery("Profile.findByFavouriteUnit");
+        query.setParameter("favouriteUnit", favouriteUnit);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByCurrentJob/{currentJob}")
+    @Produces({"application/json"})
+    public List<Profile> findByCurrentJob(@PathParam("currentJob") String currentJob) {
+        Query query = em.createNamedQuery("Profile.findByCurrentJob");
+        query.setParameter("currentJob", currentJob);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByEmail/{email}")
+    @Produces({"application/json"})
+    public List<Profile> findByEmail(@PathParam("email") String email) {
+        Query query = em.createNamedQuery("Profile.findByEmail");
+        query.setParameter("email", email);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findBySubscriptionDatetime/{subscriptionDatetime}")
+    @Produces({"application/json"})
+    public List<Profile> findBySubscriptionDatetime(@PathParam("subscriptionDatetime") String subscriptionDatetime) {
+        Query query = em.createNamedQuery("Profile.findBySubscriptionDatetime");
+        query.setParameter("subscriptionDatetime", subscriptionDatetime);
+        return query.getResultList();
+    }
+
+    
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

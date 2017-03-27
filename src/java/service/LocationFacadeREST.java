@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -61,6 +62,43 @@ public class LocationFacadeREST extends AbstractFacade<Location> {
     public Location find(@PathParam("id") Integer id) {
         return super.find(id);
     }
+    
+    @GET
+    @Path("findByLocationName/{locationName}")
+    @Produces({"application/json"})
+    public List<Location> findByLocationName(@PathParam("locationName") String locationName) {
+        Query query = em.createNamedQuery("Location.findByLocationName");
+        query.setParameter("locationName", locationName);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByLatitude/{latitude}")
+    @Produces({"application/json"})
+    public List<Location> findByLatitude(@PathParam("latitude") String latitude) {
+        Query query = em.createNamedQuery("Location.findByLatitude");
+        query.setParameter("latitude", latitude);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByLongitude/{longitude}")
+    @Produces({"application/json"})
+    public List<Location> findByLongitude(@PathParam("longitude") String longitude) {
+        Query query = em.createNamedQuery("Location.findByLongitude");
+        query.setParameter("longitude", longitude);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByDateTime/{dateTime}")
+    @Produces({"application/json"})
+    public List<Location> findByDateTime(@PathParam("dateTime") String dateTime) {
+        Query query = em.createNamedQuery("Location.findByDateTime");
+        query.setParameter("dateTime", dateTime);
+        return query.getResultList();
+    }
+
 
     @GET
     @Override

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -62,6 +63,43 @@ public class FriendshipFacadeREST extends AbstractFacade<Friendship> {
         return super.find(id);
     }
 
+    @GET
+    @Path("findByStudOneID/{studentOneId}")
+    @Produces({"application/json"})
+    public List<Friendship> findByStudOneID(@PathParam("studentOneId") Integer studentOneId) {
+        Query query = em.createNamedQuery("Friendship.findByStudentOneId");
+        query.setParameter("studentOneId", studentOneId);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByStudTwoID/{studentTwoId}")
+    @Produces({"application/json"})
+    public List<Friendship> findByStudTwoID(@PathParam("studentTwoId") Integer studentTwoId) {
+        Query query = em.createNamedQuery("Friendship.findByStudTwoID");
+        query.setParameter("studentTwoId", studentTwoId);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByStartingDate/{startingDate}")
+    @Produces({"application/json"})
+    public List<Friendship> findByStartingDate(@PathParam("startingDate") String startingDate) {
+        Query query = em.createNamedQuery("Friendship.findByStartingDate");
+        query.setParameter("startingDate", startingDate);
+        return query.getResultList();
+    }
+
+    @GET
+    @Path("findByEndingDate/{endingDate}")
+    @Produces({"application/json"})
+    public List<Friendship> findByEndingDate(@PathParam("endingDate") String endingDate) {
+        Query query = em.createNamedQuery("Friendship.findByEndingDate");
+        query.setParameter("endingDate", endingDate);
+        return query.getResultList();
+    }
+
+    
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
