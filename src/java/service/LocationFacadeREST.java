@@ -6,8 +6,16 @@
 package service;
 
 import entities.Location;
+import java.io.StringReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -119,8 +127,55 @@ public class LocationFacadeREST extends AbstractFacade<Location> {
         query.setParameter("locationName", locationName);
         return query.getResultList();
     }
-
-
+    
+    @GET
+    @Path("findLocationsByStudIdAndDatetime/{studentId}/{startingDate}/{endingDate}")
+    @Produces({"application/json"})
+    public JsonArray findLocationsByStudIdAndDatetime(@PathParam("studentId") Integer studentId, @PathParam("startingDate") String startingDate, @PathParam("endingDate") String endingDate) {
+        Query query = em.createQuery("SELECT l.locationName, count(l) AS frequency FROM Location l WHERE l.studentId.studentId = :studentId AND l.dateTime >= :startingDate AND l.dateTime <= :endingDate GROUP BY l.locationName");
+        query.setParameter("studentId", studentId);
+        query.setParameter("startingDate", startingDate);
+        query.setParameter("endingDate", endingDate);
+        List resultList = query.getResultList();
+        
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (Object line : resultList) {
+            Object[] list = (Object[]) line;
+            JsonObject value = Json.createObjectBuilder()
+                    .add("LocationName", list[0].toString())
+                    .add("Frequency", list[1].toString())
+                    .build();
+            arrayBuilder = arrayBuilder.add(value);
+        }
+        JsonArray array = arrayBuilder.build();
+        return array;
+    }
+    
+    @GET
+    @Path("findNearStuents/{studentId}/{latitude}/{longitude}")
+    @Produces({"application/json"})
+    public JsonArray findNearStuents(@PathParam("studentId") Integer studentId, @PathParam("latitude") String latitude, @PathParam("longitude") String longitude) {
+        Query query = em.createQuery("SELECT l.studentId.studentId, MAX(l.dateTime) FROM Location l WHERE l.studentId.studentId != :studentId GROUP BY l.studentId.studentId, l.dateTime");
+        query.setParameter("studentId", studentId);
+//        query.setParameter("latitude", latitude);
+//        query.setParameter("longitude", longitude);
+        List resultList = query.getResultList();
+        
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (Object line : resultList) {
+            Object[] list = (Object[]) line;
+            JsonObject value = Json.createObjectBuilder()
+                    .add("LocationName", list[0].toString())
+                    .add("Frequency", list[1].toString())
+                    .build();
+            arrayBuilder = arrayBuilder.add(value);
+        }
+        JsonArray array = arrayBuilder.build();
+        return array;
+    }
+    
+    
+    
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})

@@ -106,7 +106,6 @@ public class FriendshipFacadeREST extends AbstractFacade<Friendship> {
         Query query = em.createNamedQuery("Friendship.findByStudFullName");
         query.setParameter("firstName", firstName);
         query.setParameter("lastName", lastName);
-        System.out.println(firstName + " " + lastName);
         return query.getResultList();
     }
 
