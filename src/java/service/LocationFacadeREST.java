@@ -7,6 +7,8 @@ package service;
 
 import entities.Location;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,8 +144,8 @@ public class LocationFacadeREST extends AbstractFacade<Location> {
         for (Object line : resultList) {
             Object[] list = (Object[]) line;
             JsonObject value = Json.createObjectBuilder()
-                    .add("LocationName", list[0].toString())
-                    .add("Frequency", list[1].toString())
+                    .add("locationName", list[0].toString())
+                    .add("frequency", list[1].toString())
                     .build();
             arrayBuilder = arrayBuilder.add(value);
         }
@@ -154,27 +156,31 @@ public class LocationFacadeREST extends AbstractFacade<Location> {
     @GET
     @Path("findNearStuents/{studentId}/{latitude}/{longitude}")
     @Produces({"application/json"})
-    public JsonArray findNearStuents(@PathParam("studentId") Integer studentId, @PathParam("latitude") String latitude, @PathParam("longitude") String longitude) {
-        Query query = em.createQuery("SELECT l.studentId.studentId, MAX(l.dateTime) FROM Location l WHERE l.studentId.studentId != :studentId GROUP BY l.studentId.studentId, l.dateTime");
+    public JsonArray findNearStuents(@PathParam("studentId") Integer studentId, @PathParam("latitude") float latitude, @PathParam("longitude") float longitude) {
+        //distance calculation sql
+        String distanceFunc = "6371.004 * FUNC('acos', FUNC('cos', FUNC('radians', l1.latitude)) * FUNC('cos', FUNC('radians', :latitude)) * FUNC('cos', FUNC('radians', l1.longitude - :longitude)) + FUNC('sin', FUNC('radians', l1.latitude)) * FUNC('sin', FUNC('radians', :latitude)))";
+        Query query = em.createQuery("SELECT " + distanceFunc + " AS distance, l1.latitude, l1.longitude, l1.studentId.firstName, l1.studentId.lastName FROM Location l1 WHERE l1.dateTime = (SELECT MAX(l2.dateTime) FROM Location l2 WHERE l1.studentId.studentId = l2.studentId.studentId GROUP BY l2.studentId.studentId) AND l1.studentId.studentId != :studentId ORDER BY distance");
         query.setParameter("studentId", studentId);
-//        query.setParameter("latitude", latitude);
-//        query.setParameter("longitude", longitude);
+        query.setParameter("latitude", latitude);
+        query.setParameter("longitude", longitude);
+        query.setMaxResults(10); //set the max results
         List resultList = query.getResultList();
-        
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (Object line : resultList) {
-            Object[] list = (Object[]) line;
+        for (Object entry : resultList) {
+            Object[] attributes = (Object[]) entry;
             JsonObject value = Json.createObjectBuilder()
-                    .add("LocationName", list[0].toString())
-                    .add("Frequency", list[1].toString())
+                    .add("firstName", attributes[3].toString())
+                    .add("lastName", attributes[4].toString())
+                    .add("latitude", attributes[1].toString())
+                    .add("longitude", attributes[2].toString())
+                    .add("distanceNearUser", attributes[0].toString())
                     .build();
             arrayBuilder = arrayBuilder.add(value);
         }
         JsonArray array = arrayBuilder.build();
+        
         return array;
     }
-    
-    
     
     @GET
     @Override

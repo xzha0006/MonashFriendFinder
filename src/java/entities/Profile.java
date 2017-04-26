@@ -51,6 +51,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Profile.findBySubscriptionDatetime", query = "SELECT p FROM Profile p WHERE p.subscriptionDatetime = :subscriptionDatetime")})
 public class Profile implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 64)
+    @Column(name = "PASSWORD")
+    private String password;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -358,6 +364,14 @@ public class Profile implements Serializable {
     @Override
     public String toString() {
         return "entities.Profile[ studentId=" + studentId + " ]";
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
 }

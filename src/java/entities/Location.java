@@ -38,6 +38,15 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Location.findByDateTime", query = "SELECT l FROM Location l WHERE l.dateTime = :dateTime")})
 public class Location implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "LATITUDE")
+    private double latitude;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "LONGITUDE")
+    private double longitude;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,16 +58,6 @@ public class Location implements Serializable {
     @Size(min = 1, max = 128)
     @Column(name = "LOCATION_NAME")
     private String locationName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 64)
-    @Column(name = "LATITUDE")
-    private String latitude;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 64)
-    @Column(name = "LONGITUDE")
-    private String longitude;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
@@ -75,7 +74,7 @@ public class Location implements Serializable {
         this.locationId = locationId;
     }
 
-    public Location(Integer locationId, String locationName, String latitude, String longitude, String dateTime) {
+    public Location(Integer locationId, String locationName, double latitude, double longitude, String dateTime) {
         this.locationId = locationId;
         this.locationName = locationName;
         this.latitude = latitude;
@@ -99,21 +98,6 @@ public class Location implements Serializable {
         this.locationName = locationName;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
 
     public String getDateTime() {
         return dateTime;
@@ -154,6 +138,23 @@ public class Location implements Serializable {
     @Override
     public String toString() {
         return "entities.Location[ locationId=" + locationId + " ]";
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
     
 }

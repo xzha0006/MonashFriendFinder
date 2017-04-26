@@ -6,8 +6,13 @@
 package service;
 
 import entities.Profile;
-import java.util.List;
+import java.util.*;
+import static javafx.scene.input.KeyCode.T;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -20,7 +25,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -215,6 +222,92 @@ public class ProfileFacadeREST extends AbstractFacade<Profile> {
         query.setParameter("firstName", firstName);
         query.setParameter("lastName", lastName);
         return query.getResultList();
+    }
+    
+    @GET
+    @Path("matchFriendsByThreeKeywords/{studentId}/{keyword1}/{keyword2}/{keyword3}")
+    @Produces({"application/json"})
+    public Response matchFriendsByThreeKeywords(@PathParam("studentId") Integer studentId, @PathParam("keyword1") String keyword1, @PathParam("keyword2") String keyword2, @PathParam("keyword3") String keyword3){
+        List<String> keyWords = new ArrayList(Arrays.asList("course", "study mode", "suburb",
+                "nationality", "native language", "favourite sport",
+                "favourite movie", "favourite unit", "current job"));
+        String[] params = {keyword1, keyword2, keyword3};
+        String queryString = "SELECT p1 FROM Profile p1 WHERE EXISTS (SELECT p2 FROM Profile p2 WHERE p2.studentId = :studentId AND p1.studentId != :studentId";
+        //create the query string
+        boolean allKeysEmpty = true;//handle zero keyword exception
+        for (int i = 0; i < params.length; i++) {
+            if (keyWords.contains(params[i].trim())) {
+                allKeysEmpty = false;
+                //change the input to camel style, like "native language" to "nativeLanguage"
+                String param = params[i].trim().split(" ").length == 1 ? params[i].trim() : params[i].trim().split(" ")[0] + params[i].trim().split(" ")[1].substring(0, 1).toUpperCase() + params[i].trim().split(" ")[1].substring(1);
+                queryString += " AND p2." + param + " = " + "p1." + param;
+            } else {
+                //invalid input EXCEPTION
+                return Response.ok("Error: invalid input keywords. Please enter valid keywords: [course, study mode, suburb, nationality, native language, favourite sport, favourite movie, favourite unit, current job]").build();
+            }
+        }
+        //test if there is no input keywords
+        if (allKeysEmpty)
+            return Response.ok("Error: zero input keywords. Please enter at least one valid keywords: [course, study mode, suburb, nationality, native language, favourite sport, favourite movie, favourite unit, current job]").build();
+        queryString += ")";
+        TypedQuery<Profile> query =  em.createQuery(queryString, Profile.class);
+        query.setParameter("studentId", studentId);
+        List<Profile> results = query.getResultList();
+        GenericEntity<List<Profile>> entity = new GenericEntity<List<Profile>>(results){};
+        return Response.ok(entity).build();
+    }
+    
+    @GET
+    @Path("matchFriendsByAnyKeywords/{studentId}/{keyword1:.*}/{keyword2:.*}/{keyword3:.*}/{keyword4:.*}/{keyword5:.*}/{keyword6:.*}/{keyword7:.*}/{keyword8:.*}/{keyword9:.*}")
+    @Produces({"application/json"})
+    public Response matchFriendsByAnyKeywords(@PathParam("studentId") Integer studentId, @PathParam("keyword1") String keyword1, @PathParam("keyword2") String keyword2, @PathParam("keyword3") String keyword3, @PathParam("keyword4") String keyword4
+            , @PathParam("keyword5") String keyword5, @PathParam("keyword6") String keyword6, @PathParam("keyword7") String keyword7, @PathParam("keyword8") String keyword8, @PathParam("keyword9") String keyword9){
+        List<String> keyWords = new ArrayList(Arrays.asList("course", "study mode", "suburb",
+                "nationality", "native language", "favourite sport",
+                "favourite movie", "favourite unit", "current job"));
+        String[] params = {keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7, keyword8, keyword9};
+        String queryString = "SELECT p1 FROM Profile p1 WHERE EXISTS (SELECT p2 FROM Profile p2 WHERE p2.studentId = :studentId AND p1.studentId != :studentId";
+        //create the query string
+        boolean allKeysEmpty = true;
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].trim().isEmpty())
+                continue;
+            if (keyWords.contains(params[i].trim())) {
+                allKeysEmpty = false;
+                //change the input to camel style, like "native language" to "nativeLanguage"
+                String param = params[i].trim().split(" ").length == 1 ? params[i].trim() : params[i].trim().split(" ")[0] + params[i].trim().split(" ")[1].substring(0, 1).toUpperCase() + params[i].trim().split(" ")[1].substring(1);
+                queryString += " AND p2." + param + " = " + "p1." + param;
+            } else {
+                //invalid input EXCEPTION
+                return Response.ok("Error: invalid input keywords. Please enter valid keywords: [course, study mode, suburb, nationality, native language, favourite sport, favourite movie, favourite unit, current job]").build();
+            }
+        }
+        //test if there is no input keywords
+        if (allKeysEmpty)
+            return Response.ok("Error: zero input keywords. Please enter at least one valid keywords: [course, study mode, suburb, nationality, native language, favourite sport, favourite movie, favourite unit, current job]").build();
+        queryString += ")";
+        TypedQuery<Profile> query =  em.createQuery(queryString, Profile.class);
+        query.setParameter("studentId", studentId);
+        List<Profile> results = query.getResultList();
+        GenericEntity<List<Profile>> entity = new GenericEntity<List<Profile>>(results){};
+        return Response.ok(entity).build();
+    }
+    
+    @GET
+    @Path("favouriteUnitFrequency")
+    @Produces({"application/json"})
+    public JsonArray favouriteUnitFrequency(){
+        TypedQuery<Object[]> query =  em.createQuery("SELECT p.favouriteUnit, count(p) FROM Profile p GROUP BY p.favouriteUnit", Object[].class);
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (Object[] line : query.getResultList()) {
+            JsonObject value = Json.createObjectBuilder()
+                    .add("favouriteUnitName", line[0].toString())
+                    .add("Frequency", line[1].toString())
+                    .build();
+            arrayBuilder = arrayBuilder.add(value);
+        }
+        JsonArray array = arrayBuilder.build();
+        return array;
     }
     
     @GET
